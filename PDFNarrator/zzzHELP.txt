@@ -1,0 +1,20 @@
+This file is used to provide help information for the PDFNarrator application.
+
+
+
+
+API Documentation
+===================
+PDFSharp API Documentation
+-------------------
+Partial API Documentation
+Link: https://www.pdfsharp.net/wiki/PDFsharpFirstSteps.ashx
+
+Partial API Documentation
+Link: https://docs.pdfsharp.net/PDFsharp/Topics/Start/First-PDF.html
+
+
+===================
+Windows.SynteticSpeech API Documentation
+-------------------
+Link: https://learn.microsoft.com/en-us/uwp/api/windows.media.speechsynthesis.speechsynthesizer?view=winrt-26100
