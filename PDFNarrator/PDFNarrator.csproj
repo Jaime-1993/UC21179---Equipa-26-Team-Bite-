@@ -112,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller.cs" />
+    <Compile Include="View_02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View_02.Designer.cs">
+      <DependentUpon>View_02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model.cs" />
     <Compile Include="View.cs">
       <SubType>Form</SubType>
