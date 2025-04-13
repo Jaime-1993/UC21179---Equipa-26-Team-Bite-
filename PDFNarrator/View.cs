@@ -23,6 +23,8 @@ namespace PDFNarrator
             model = m;
             InitializeComponent();
             //SetupControls();
+            
+            //Test
         }
 
         private void SetupControls()
