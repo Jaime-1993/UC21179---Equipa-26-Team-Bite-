@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFNarrator", "PDFNarrator\PDFNarrator.csproj", "{935AC3F1-6D4F-45EB-905C-D26FFEBF03E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{935AC3F1-6D4F-45EB-905C-D26FFEBF03E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{935AC3F1-6D4F-45EB-905C-D26FFEBF03E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{935AC3F1-6D4F-45EB-905C-D26FFEBF03E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{935AC3F1-6D4F-45EB-905C-D26FFEBF03E4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {714A4605-9517-472F-9C32-7C729EF246F9}
+	EndGlobalSection
+EndGlobal
