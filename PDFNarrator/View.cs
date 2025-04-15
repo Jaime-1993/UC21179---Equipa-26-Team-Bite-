@@ -102,5 +102,19 @@ namespace PDFNarrator
             // Método vazio
         }
 
+        public void Test_Write_to_TextBox(String data)
+        {
+            txtOutput.Text = data;
+        }
+
+        private void btn_dummy_Click(object sender, EventArgs e)
+        {
+            controller.TEST_READPDF();
+        }
+
+        private void btn_clear_Click(object sender, EventArgs e)
+        {
+            txtOutput.Text = "";
+        }
     }
 }

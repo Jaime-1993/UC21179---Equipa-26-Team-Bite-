@@ -33,6 +33,8 @@
             this.btnStopNarration = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btn_Dummy = new System.Windows.Forms.Button();
+            this.btn_clear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnLoadPDF
@@ -91,11 +93,37 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "PDF Transcription";
             // 
+            // btn_Dummy
+            // 
+            this.btn_Dummy.DialogResult = System.Windows.Forms.DialogResult.No;
+            this.btn_Dummy.Font = new System.Drawing.Font("Verdana", 9F);
+            this.btn_Dummy.Location = new System.Drawing.Point(507, 336);
+            this.btn_Dummy.Name = "btn_Dummy";
+            this.btn_Dummy.Size = new System.Drawing.Size(74, 23);
+            this.btn_Dummy.TabIndex = 5;
+            this.btn_Dummy.Text = "Dummy";
+            this.btn_Dummy.UseVisualStyleBackColor = true;
+            this.btn_Dummy.Click += new System.EventHandler(this.btn_dummy_Click);
+            // 
+            // btn_clear
+            // 
+            this.btn_clear.DialogResult = System.Windows.Forms.DialogResult.No;
+            this.btn_clear.Font = new System.Drawing.Font("Verdana", 9F);
+            this.btn_clear.Location = new System.Drawing.Point(393, 336);
+            this.btn_clear.Name = "btn_clear";
+            this.btn_clear.Size = new System.Drawing.Size(74, 23);
+            this.btn_clear.TabIndex = 6;
+            this.btn_clear.Text = "Clear";
+            this.btn_clear.UseVisualStyleBackColor = true;
+            this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
+            // 
             // View
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 361);
+            this.Controls.Add(this.btn_clear);
+            this.Controls.Add(this.btn_Dummy);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.btnStopNarration);
@@ -116,6 +144,8 @@
         private System.Windows.Forms.Button btnStopNarration;
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btn_Dummy;
+        private System.Windows.Forms.Button btn_clear;
     }
 }
 

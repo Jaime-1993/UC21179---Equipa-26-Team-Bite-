@@ -1,5 +1,10 @@
-﻿using System;
+﻿using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf;
+using PdfSharpTextExtractor;
+using System;
 using System.Windows.Forms;
+using System.IO;
+using System.Xml.Linq;
 
 namespace PDFNarrator
 {
@@ -149,5 +154,30 @@ namespace PDFNarrator
         {
             // Método vazio
         }
+
+        public void TEST_READPDF()
+        {
+            // Diretório base da aplicação (normalmente bin\Debug ou bin\Release)
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string filename = "Test001.pdf";
+            // Caminho relativo do ficheiro de"Test001.pdf"ntro do projeto
+            //string filePath = Path.Combine(baseDir, "data", filename);
+            
+            
+            // ESTE CAMINHO FUNCIONA MAS TEM QUE ADAPTAR CONSOANTE A VOSSA LOCALIZAÇÃO.
+            string filePath = "C:\\Users\\<username>\\source\\repos\\Jaime-1993\\UC21179---Equipa-26-Team-Bite-\\PDFNarrator\\data\\Test001.pdf";
+            
+            // AINDA NÃO FUNCIONA
+            //string filePath = "\\PDFNarrator\\data\\Test002.pdf";
+            // Open the file
+            //PdfDocument doc = PdfReader.Open(filename, PdfDocumentOpenMode.Import);
+            PdfDocument doc = PdfReader.Open(filePath);
+
+            string name = Path.GetFileNameWithoutExtension(filePath);
+            string data001 = Extractor.PdfToText(filePath);
+
+            view.Test_Write_to_TextBox(data001);
+        }
+
     }
 }
