@@ -1,7 +1,9 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System;
+using System.Reflection;
 using System.Speech.Synthesis;
+using System.Windows.Forms;
 
 namespace PDFNarrator
 {
@@ -15,6 +17,7 @@ namespace PDFNarrator
         // Delegado para notificar o Controller sobre o estado do PDF ou áudio
         public delegate void StatusUpdateHandler(object sender, EventArgs e);
         public event StatusUpdateHandler PDFLoadedEvent;
+        public event StatusUpdateHandler FileLoadFailedEvent;
         public event StatusUpdateHandler AudioSyncedEvent;
         public event StatusUpdateHandler AudioStoppedEvent;
 
@@ -38,10 +41,38 @@ namespace PDFNarrator
             view = v;
         }
 
-        public void LoadPDFFile()
+        private void LoadPDFFile()
         {
-            // Simula carregamento do PDF e notifica o Controller
-            PDFLoadedEvent?.Invoke(this, EventArgs.Empty);
+            // Usar janela de procura do Windows
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+                openFileDialog.Title = "Escolher PDF";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog.FileName;
+
+                    try
+                    {
+                        // pdfSharp para carregar documento
+                        PdfDocument document = PdfReader.Open(filePath, PdfDocumentOpenMode.Import);
+
+                        Console.WriteLine("PDF Loaded. Total pages: " + document.PageCount);
+
+                        // pdf load sucesso
+                        PDFLoadedEvent?.Invoke(this, EventArgs.Empty);
+                    }
+                    catch (Exception ex)
+                    {
+                        // pdf load sucesso
+                        MessageBox.Show("Erro: " + ex.Message);
+                        FileLoadFailedEvent?.Invoke(this, EventArgs.Empty);
+
+                        
+                    }
+                }
+            }
         }
 
         public void PDFLoaded()
