@@ -22,7 +22,7 @@ namespace PDFNarrator
             controller = c;
             model = m;
             InitializeComponent();
-            //SetupControls();
+            SetupControls();
             
             //Test
         }
