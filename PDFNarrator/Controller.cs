@@ -25,7 +25,7 @@ namespace PDFNarrator
             model.SetView(view);
 
             // Ligar eventos da View aos métodos do Controller
-            view.LoadPDFClicked += (s, e) => LoadPDF();
+            view.OnLoadPDF += LoadPDF;
             view.StartNarrationClicked += (s, e) => StartNarration();
             view.StopNarrationClicked += (s, e) => EndNarration();
             view.ExitAppRequested += (s, e) => ExitApp();
@@ -47,8 +47,31 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void LoadPDF()
+        public void LoadPDF(string path)
         {
+            // Aqui irá abrir o caminho do PDF
+            
+            // TODO: Validar se o caminho existe antes de abrir
+            PdfDocument doc = PdfReader.Open(path);
+
+            // TODO: Pedir ao model para extrair o texto do PDF
+            string data001 = Extractor.PdfToText(path);
+
+            // ***********************************************
+            //      Esta parte terá de ser implementada por um evento gerado pelo model
+            // ***********************************************
+            // TODO: Validar a informação extraida está ok ou nok
+            if (true) {
+                data001 = "OK";
+            }
+            else
+            {
+                data001 = "NOK";
+            }
+
+            // ***********************************************
+            //    Acho que esta parte já não será necessário
+            // ***********************************************
             // Dispara evento para o Model carregar o PDF
             PDFLoadRequested?.Invoke(this, EventArgs.Empty);
         }

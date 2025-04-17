@@ -47,6 +47,7 @@
             this.btnLoadPDF.TabIndex = 0;
             this.btnLoadPDF.Text = "Load PDF";
             this.btnLoadPDF.UseVisualStyleBackColor = true;
+            this.btnLoadPDF.Click += new System.EventHandler(this.btnLoadPDF_Click);
             // 
             // btnStartNarration
             // 
