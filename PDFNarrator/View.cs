@@ -22,7 +22,7 @@ namespace PDFNarrator
             controller = c;
             model = m;
             InitializeComponent();
-            //SetupControls();
+            SetupControls();
             
             //Test
         }
@@ -107,10 +107,10 @@ namespace PDFNarrator
             txtOutput.Text = data;
         }
 
-        private void btn_dummy_Click(object sender, EventArgs e)
-        {
-            controller.TEST_READPDF();
-        }
+        //private void btn_dummy_Click(object sender, EventArgs e)
+        //{
+        //    controller.TEST_READPDF();
+        //}
 
         private void btn_clear_Click(object sender, EventArgs e)
         {

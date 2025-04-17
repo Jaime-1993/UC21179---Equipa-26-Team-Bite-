@@ -103,7 +103,7 @@
             this.btn_Dummy.TabIndex = 5;
             this.btn_Dummy.Text = "Dummy";
             this.btn_Dummy.UseVisualStyleBackColor = true;
-            this.btn_Dummy.Click += new System.EventHandler(this.btn_dummy_Click);
+            //this.btn_Dummy.Click += new System.EventHandler(this.btn_dummy_Click);
             // 
             // btn_clear
             // 
