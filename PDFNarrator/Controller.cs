@@ -13,6 +13,8 @@ namespace PDFNarrator
         private View view;
         private Model model;
 
+        private string extractedText;
+
         // Evento para notificar o Model de ações como carregar PDF ou iniciar narração
         public event EventHandler PDFLoadRequested;
         public event EventHandler AudioSynthesisRequested;
@@ -29,6 +31,9 @@ namespace PDFNarrator
             view.StartNarrationClicked += (s, e) => StartNarration();
             view.StopNarrationClicked += (s, e) => EndNarration();
             view.ExitAppRequested += (s, e) => ExitApp();
+
+            // Subscreve o evento do Model
+            model.PDFLoadedEvent += (s, e) => PDFLoaded();
         }
 
         public void LaunchApp()
@@ -49,28 +54,18 @@ namespace PDFNarrator
 
         public void LoadPDF()
         {
-            // Criar um OpenFileDialog para selecionar o PDF
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "PDF Files|*.pdf"; // Filtra apenas ficheiros PDF
+                openFileDialog.Filter = "PDF Files|*.pdf";
                 openFileDialog.Title = "Select a PDF File";
-
-                // Mostrar o pop-up e verificar se o utilizador selecionou um ficheiro
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    // Obter o caminho do ficheiro selecionado
                     string filePath = openFileDialog.FileName;
-
-                    // Abrir o PDF e extrair texto
-                    PdfDocument doc = PdfReader.Open(filePath);
-                    string data001 = Extractor.PdfToText(filePath);
-
-                    // Mostrar o texto extraído na View
-                    view.Test_Write_to_TextBox(data001);
+                    model.UpdateFileStatus(filePath); // Passa o caminho ao Model
+                    PDFLoadRequested?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    // O utilizador cancelou a seleção
                     view.Test_Write_to_TextBox("No PDF file selected.");
                 }
             }
@@ -88,7 +83,7 @@ namespace PDFNarrator
 
         public void PDFLoaded()
         {
-            // Método vazio
+            view.ShowSuccessMessage(extractedText);
         }
 
         public void ExtractText()
@@ -178,6 +173,10 @@ namespace PDFNarrator
             // Método vazio
         }
 
+        public void SetExtractedText(string text)
+        {
+            extractedText = text;
+        }
         public void TEST_READPDF()
         {
             // Criar um OpenFileDialog para selecionar o PDF

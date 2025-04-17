@@ -52,9 +52,10 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void ShowSuccessMessage()
+        public void ShowSuccessMessage(string extractedText)
         {
-            // Método vazio
+            txtOutput.Text = extractedText;
+            MessageBox.Show("PDF loaded successfully!", "Success");
         }
 
         public void ShowErrorMessage()

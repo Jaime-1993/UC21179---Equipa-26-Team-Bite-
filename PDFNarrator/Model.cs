@@ -1,7 +1,9 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using PdfSharpTextExtractor;
 using System;
 using System.Speech.Synthesis;
+using System.Windows.Forms;
 
 namespace PDFNarrator
 {
@@ -11,6 +13,8 @@ namespace PDFNarrator
         private View view;
         private PdfDocument pdfDocument;
         private SpeechSynthesizer synthesizer;
+
+        private string currentFilePath;
 
         // Delegado para notificar o Controller sobre o estado do PDF ou áudio
         public delegate void StatusUpdateHandler(object sender, EventArgs e);
@@ -40,8 +44,20 @@ namespace PDFNarrator
 
         public void LoadPDFFile()
         {
-            // Simula carregamento do PDF e notifica o Controller
-            PDFLoadedEvent?.Invoke(this, EventArgs.Empty);
+            if (!string.IsNullOrEmpty(currentFilePath))
+            {
+                try
+                {
+                    pdfDocument = PdfReader.Open(currentFilePath); // Usa o campo pdfDocument
+                    string data001 = Extractor.PdfToText(currentFilePath);
+                    controller.SetExtractedText(data001); // Usa o método público
+                    PDFLoadedEvent?.Invoke(this, EventArgs.Empty);
+                }
+                catch (Exception)
+                {
+                    view.Test_Write_to_TextBox("Error loading PDF file.");
+                }
+            }
         }
 
         public void PDFLoaded()
@@ -59,9 +75,9 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void UpdateFileStatus()
+        public void UpdateFileStatus(string filePath)
         {
-            // Método vazio
+            currentFilePath = filePath;
         }
 
         public void FileLoadFailed()
