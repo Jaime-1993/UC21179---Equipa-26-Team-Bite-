@@ -157,26 +157,31 @@ namespace PDFNarrator
 
         public void TEST_READPDF()
         {
-            // Diretório base da aplicação (normalmente bin\Debug ou bin\Release)
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string filename = "Test001.pdf";
-            // Caminho relativo do ficheiro de"Test001.pdf"ntro do projeto
-            //string filePath = Path.Combine(baseDir, "data", filename);
-            
-            
-            // ESTE CAMINHO FUNCIONA MAS TEM QUE ADAPTAR CONSOANTE A VOSSA LOCALIZAÇÃO.
-            string filePath = "C:\\Users\\<username>\\source\\repos\\Jaime-1993\\UC21179---Equipa-26-Team-Bite-\\PDFNarrator\\data\\Test001.pdf";
-            
-            // AINDA NÃO FUNCIONA
-            //string filePath = "\\PDFNarrator\\data\\Test002.pdf";
-            // Open the file
-            //PdfDocument doc = PdfReader.Open(filename, PdfDocumentOpenMode.Import);
-            PdfDocument doc = PdfReader.Open(filePath);
+            // Criar um OpenFileDialog para selecionar o PDF
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "PDF Files|*.pdf"; // Filtra apenas ficheiros PDF
+                openFileDialog.Title = "Select a PDF File";
 
-            string name = Path.GetFileNameWithoutExtension(filePath);
-            string data001 = Extractor.PdfToText(filePath);
+                // Mostrar o pop-up e verificar se o utilizador selecionou um ficheiro
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Obter o caminho do ficheiro selecionado
+                    string filePath = openFileDialog.FileName;
 
-            view.Test_Write_to_TextBox(data001);
+                    // Abrir o PDF e extrair texto
+                    PdfDocument doc = PdfReader.Open(filePath);
+                    string data001 = Extractor.PdfToText(filePath);
+
+                    // Mostrar o texto extraído na View
+                    view.Test_Write_to_TextBox(data001);
+                }
+                else
+                {
+                    // O utilizador cancelou a seleção
+                    view.Test_Write_to_TextBox("No PDF file selected.");
+                }
+            }
         }
 
     }
