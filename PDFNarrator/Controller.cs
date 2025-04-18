@@ -5,6 +5,8 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PDFNarrator
 {
@@ -13,6 +15,15 @@ namespace PDFNarrator
         private View view;
         private Model model;
 
+
+        // Evento para printar informação na View-Sucess
+        public event SuccessMsg_Handler OnSuccessMessage;
+        public delegate void SuccessMsg_Handler();
+
+        // Evento para printar informação na View-Sucess
+        public event FailedMsg_Handler OnFailedMessage;
+        public delegate void FailedMsg_Handler(string text);
+
         // Evento para notificar o Model de ações como carregar PDF ou iniciar narração
         public event EventHandler PDFLoadRequested;
         public event EventHandler AudioSynthesisRequested;
@@ -20,21 +31,24 @@ namespace PDFNarrator
 
         public Controller()
         {
-            model = new Model(this, null);
+            model = new Model(this, view);
             view = new View(this, model);
-            model.SetView(view);
+
+            model.setView(view);
+            model.setupEvents();
 
             // Ligar eventos da View aos métodos do Controller
             view.OnLoadPDF += LoadPDF;
-            view.StartNarrationClicked += (s, e) => StartNarration();
+
+            view.OnStartNarration += BeginNarration;
             view.StopNarrationClicked += (s, e) => EndNarration();
             view.ExitAppRequested += (s, e) => ExitApp();
         }
 
         public void LaunchApp()
         {
-            view.DisplayInterface();
-            Application.Run(view);
+            view.CreateInterface();
+            view.AnimateButtons();
         }
 
         public void CreateInterface()
@@ -47,84 +61,62 @@ namespace PDFNarrator
             // Método vazio
         }
 
+        ///////////////////////////////////////////////
         public void LoadPDF(string path)
         {
-            // Aqui irá abrir o caminho do PDF
-            
-            // TODO: Validar se o caminho existe antes de abrir
-            PdfDocument doc = PdfReader.Open(path);
+            string data;
 
-            // TODO: Pedir ao model para extrair o texto do PDF
-            string data001 = Extractor.PdfToText(path);
-
-            // ***********************************************
-            //      Esta parte terá de ser implementada por um evento gerado pelo model
-            // ***********************************************
-            // TODO: Validar a informação extraida está ok ou nok
-            if (true) {
-                data001 = "OK";
-            }
-            else
-            {
-                data001 = "NOK";
+            // Check if the path is valid
+            if (string.IsNullOrWhiteSpace(path)) {
+                data = "The path supllied is empty";
+                AskToShowErrorMessageOnFileLoad(data);
+                return;
             }
 
-            // ***********************************************
-            //    Acho que esta parte já não será necessário
-            // ***********************************************
-            // Dispara evento para o Model carregar o PDF
-            PDFLoadRequested?.Invoke(this, EventArgs.Empty);
-        }
+            // Check if the file exist in this path
+            if (!File.Exists(path)) {
+                data = "The path supllied doesn't exist";
+                AskToShowErrorMessageOnFileLoad(data);
+                return;
+            }
 
-        public void AskToShowPopUpForPathOfPDF()
-        {
-            // Método vazio
-        }
+            // Send path to Model to load the PDF
+            // Returns Info or Error
+            if (model.LoadPDFFile(path) == 0) {
+                if (model.ExtractText(path) == 0) 
+                    UpdateFileStatus();
+                else
+                {
+                    data = "Error extracting text from PDF file.";
+                    AskToShowErrorMessageOnFileLoad(data);
+                }
 
-        public void LoadPDFFile()
-        {
-            // Método vazio
-        }
+            } else {
+                data = "Error loading PDF file.";
+                AskToShowErrorMessageOnFileLoad(data);
+            }
 
-        public void PDFLoaded()
-        {
-            // Método vazio
-        }
-
-        public void ExtractText()
-        {
-            // Método vazio
-        }
-
-        public void TextExtracted()
-        {
-            // Método vazio
         }
 
         public void UpdateFileStatus()
         {
-            // Método vazio
+            OnSuccessMessage?.Invoke();
         }
 
-        public void FileLoadFailed()
+        public void AskToShowErrorMessageOnFileLoad(string data)
+        {
+            OnFailedMessage?.Invoke(data);
+        }
+
+        public void SetPDFData()
         {
             // Método vazio
         }
-
-        public void AskToShowErrorMessageOnFileLoad()
+        
+        ////////////////////////////////////////////////
+        public void BeginNarration(object sender, EventArgs e)
         {
-            // Método vazio
-        }
-
-        public void BeginNarration()
-        {
-            // Método vazio
-        }
-
-        public void StartNarration()
-        {
-            // Dispara evento para o Model iniciar a síntese de áudio
-            AudioSynthesisRequested?.Invoke(this, EventArgs.Empty);
+            model.StartAudioSynthesis();
         }
 
         public void StartAudioSynthesis()
@@ -176,35 +168,6 @@ namespace PDFNarrator
         public void ExitApp()
         {
             // Método vazio
-        }
-
-        public void TEST_READPDF()
-        {
-            // Criar um OpenFileDialog para selecionar o PDF
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Filter = "PDF Files|*.pdf"; // Filtra apenas ficheiros PDF
-                openFileDialog.Title = "Select a PDF File";
-
-                // Mostrar o pop-up e verificar se o utilizador selecionou um ficheiro
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Obter o caminho do ficheiro selecionado
-                    string filePath = openFileDialog.FileName;
-
-                    // Abrir o PDF e extrair texto
-                    PdfDocument doc = PdfReader.Open(filePath);
-                    string data001 = Extractor.PdfToText(filePath);
-
-                    // Mostrar o texto extraído na View
-                    view.Test_Write_to_TextBox(data001);
-                }
-                else
-                {
-                    // O utilizador cancelou a seleção
-                    view.Test_Write_to_TextBox("No PDF file selected.");
-                }
-            }
         }
 
     }

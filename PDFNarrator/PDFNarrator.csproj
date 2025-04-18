@@ -154,6 +154,7 @@
     <EmbeddedResource Include="View.resx">
       <DependentUpon>View.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="data\error.pdf" />
     <None Include="data\Test001.pdf" />
     <None Include="data\Test002.pdf" />
     <None Include="packages.config" />
@@ -183,6 +184,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="data\Diagrama V3.png" />
     <Content Include="zzzHELP.txt" />
   </ItemGroup>
   <ItemGroup />

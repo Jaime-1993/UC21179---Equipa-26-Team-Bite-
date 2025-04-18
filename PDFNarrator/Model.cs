@@ -1,6 +1,10 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf.Content;
+using PdfSharpTextExtractor;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Speech.Synthesis;
 
 namespace PDFNarrator
@@ -11,6 +15,12 @@ namespace PDFNarrator
         private View view;
         private PdfDocument pdfDocument;
         private SpeechSynthesizer synthesizer;
+
+        private string str_text_extracted = "";
+
+        // Evento para notificar a VIEW com a informação do PDF
+        public event SendPDFdata_Handler OnSendPDFData;
+        public delegate void SendPDFdata_Handler(string data);
 
         // Delegado para notificar o Controller sobre o estado do PDF ou áudio
         public delegate void StatusUpdateHandler(object sender, EventArgs e);
@@ -23,50 +33,53 @@ namespace PDFNarrator
             controller = c;
             view = v;
             synthesizer = new SpeechSynthesizer();
-
-            // Ligar eventos do Controller aos métodos do Model
-            if (controller != null)
-            {
-                controller.PDFLoadRequested += (s, e) => LoadPDFFile();
-                controller.AudioSynthesisRequested += (s, e) => StartAudioSynthesis();
-                controller.StopAudioSynthesisRequested += (s, e) => StopAudioSynthesis();
-            }
         }
 
-        public void SetView(View v)
+        public void setView(View v)
         {
             view = v;
         }
 
-        public void LoadPDFFile()
+        public void setupEvents()
         {
-            // Simula carregamento do PDF e notifica o Controller
-            PDFLoadedEvent?.Invoke(this, EventArgs.Empty);
+            // Ligar eventos do Controller aos métodos do Model
+            //view.OnGetPDFData += GetPDFData;
+            view.OnGetPDFData += GetPDFData;
+            controller.AudioSynthesisRequested += (s, e) => StartAudioSynthesis();
+            controller.StopAudioSynthesisRequested += (s, e) => StopAudioSynthesis();
         }
 
-        public void PDFLoaded()
+        public int LoadPDFFile(string path)
         {
-            // Método vazio
+            int result;
+            
+            try {
+                pdfDocument = PdfReader.Open(path); // Usa o campo pdfDocument
+                result = 0;
+            } catch (Exception) {
+                result = -1;
+            }
+
+            return result;
         }
 
-        public void ExtractText()
+        public int ExtractText(string path)
         {
-            // Método vazio
+            // Returns Text extracted from PDF
+            try
+            {
+                str_text_extracted = Extractor.PdfToText(path);
+                return 0;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
 
-        public void TextExtracted()
+        public void GetPDFData(string data)
         {
-            // Método vazio
-        }
-
-        public void UpdateFileStatus()
-        {
-            // Método vazio
-        }
-
-        public void FileLoadFailed()
-        {
-            // Método vazio
+            OnSendPDFData?.Invoke(str_text_extracted);
         }
 
         public void StartAudioSynthesis()
