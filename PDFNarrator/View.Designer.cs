@@ -70,6 +70,7 @@
             this.btnStopNarration.TabIndex = 2;
             this.btnStopNarration.Text = "Stop Narration";
             this.btnStopNarration.UseVisualStyleBackColor = true;
+            this.btnStopNarration.Click += new System.EventHandler(this.Click_StopNarration);
             // 
             // txtOutput
             // 
@@ -81,7 +82,7 @@
             this.txtOutput.Multiline = true;
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(462, 216);
+            this.txtOutput.Size = new System.Drawing.Size(462, 206);
             this.txtOutput.TabIndex = 3;
             // 
             // label1
@@ -98,7 +99,7 @@
             // 
             this.btn_clear.DialogResult = System.Windows.Forms.DialogResult.No;
             this.btn_clear.Font = new System.Drawing.Font("Verdana", 9F);
-            this.btn_clear.Location = new System.Drawing.Point(447, 336);
+            this.btn_clear.Location = new System.Drawing.Point(447, 326);
             this.btn_clear.Name = "btn_clear";
             this.btn_clear.Size = new System.Drawing.Size(74, 23);
             this.btn_clear.TabIndex = 6;

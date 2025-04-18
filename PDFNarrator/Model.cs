@@ -1,11 +1,9 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
-using PdfSharp.Pdf.Content;
 using PdfSharpTextExtractor;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Speech.Synthesis;
 
 namespace PDFNarrator
 {
@@ -14,7 +12,6 @@ namespace PDFNarrator
         private Controller controller;
         private View view;
         private PdfDocument pdfDocument;
-        private SpeechSynthesizer synthesizer;
 
         private string str_text_extracted = "";
 
@@ -22,17 +19,20 @@ namespace PDFNarrator
         public event SendPDFdata_Handler OnSendPDFData;
         public delegate void SendPDFdata_Handler(string data);
 
+        public event AudioData_Handler OnAudioData;
+        public delegate void AudioData_Handler(string audio_data);
+
+        public event Action OnExitApp;
+
         // Delegado para notificar o Controller sobre o estado do PDF ou áudio
-        public delegate void StatusUpdateHandler(object sender, EventArgs e);
-        public event StatusUpdateHandler PDFLoadedEvent;
-        public event StatusUpdateHandler AudioSyncedEvent;
-        public event StatusUpdateHandler AudioStoppedEvent;
+        //public delegate void StatusUpdateHandler(string data, EventArgs e);
+        //public event StatusUpdateHandler AudioSyncedEvent;
+        //public event StatusUpdateHandler AudioStoppedEvent;
 
         public Model(Controller c, View v)
         {
             controller = c;
             view = v;
-            synthesizer = new SpeechSynthesizer();
         }
 
         public void setView(View v)
@@ -43,12 +43,10 @@ namespace PDFNarrator
         public void setupEvents()
         {
             // Ligar eventos do Controller aos métodos do Model
-            //view.OnGetPDFData += GetPDFData;
             view.OnGetPDFData += GetPDFData;
-            controller.AudioSynthesisRequested += (s, e) => StartAudioSynthesis();
-            controller.StopAudioSynthesisRequested += (s, e) => StopAudioSynthesis();
         }
 
+        /////////////////////////////////////////////
         public int LoadPDFFile(string path)
         {
             int result;
@@ -82,20 +80,21 @@ namespace PDFNarrator
             OnSendPDFData?.Invoke(str_text_extracted);
         }
 
-        public void StartAudioSynthesis()
+        /////////////////////////////////////////////
+        public int StartAudioSynthesis()
         {
-            // Simula início da síntese de áudio e notifica o Controller
-            AudioSyncedEvent?.Invoke(this, EventArgs.Empty);
+            // Verifica se o texto extraído está vazio
+            if (str_text_extracted == "") return -1;
+            
+            // Inicia a síntese de áudio com o texto extraído
+            view.OnSyncAudioData += AudioDataUpdate;
+            return 0;
         }
 
-        public void SyncAudioData()
+        public void AudioDataUpdate()
         {
-            // Método vazio
-        }
-
-        public void UpdateAudioData()
-        {
-            // Método vazio
+            // Atualização o texto para a reprodução de áudio e notifica a VIEW
+            OnAudioData?.Invoke(str_text_extracted);
         }
 
         public void UpdateAudioStatus()
@@ -103,30 +102,21 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void SyncFailed()
-        {
-            // Método vazio
-        }
-
         public void StopAudioSynthesis()
         {
             // Simula paragem da síntese de áudio e notifica o Controller
-            AudioStoppedEvent?.Invoke(this, EventArgs.Empty);
+            view.OnSyncAudioData -= AudioDataUpdate;
         }
 
-        public void AudioStopped()
-        {
-            // Método vazio
-        }
-
-        public void UpdateWindowStatus()
-        {
-            // Método vazio
-        }
-
+        /////////////////////////////////////////////
         public void CloseInterface()
         {
-            // Método vazio
+            // Limpa todos os eventos que possam existir
+            OnSendPDFData = null;
+            OnAudioData = null;
+
+            // Avisa a VIEW que irá fechar a aplicação
+            OnExitApp?.Invoke();
         }
     }
 }

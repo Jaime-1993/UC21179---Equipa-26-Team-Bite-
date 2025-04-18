@@ -16,33 +16,37 @@ namespace PDFNarrator
         private Model model;
 
 
-        // Evento para printar informação na View-Sucess
+        // Evento para printar informação na View ==> Sucess
         public event SuccessMsg_Handler OnSuccessMessage;
         public delegate void SuccessMsg_Handler();
 
-        // Evento para printar informação na View-Sucess
+        // Evento para printar informação na View ==> Failed
         public event FailedMsg_Handler OnFailedMessage;
         public delegate void FailedMsg_Handler(string text);
 
-        // Evento para notificar o Model de ações como carregar PDF ou iniciar narração
-        public event EventHandler PDFLoadRequested;
-        public event EventHandler AudioSynthesisRequested;
-        public event EventHandler StopAudioSynthesisRequested;
+        // Atualiza a informação sobre o estado inicial do text audio data
+        public event Action<bool> OnAudioInfoStatus;
+        public event Action OnStoppedNarration;
 
         public Controller()
         {
             model = new Model(this, view);
             view = new View(this, model);
 
+            // Updates model on VIEW info
             model.setView(view);
             model.setupEvents();
 
-            // Ligar eventos da View aos métodos do Controller
-            view.OnLoadPDF += LoadPDF;
+            SetupEvents();
+        }
 
+        public void SetupEvents()
+        {
+            // Ligar eventos do Controller aos métodos do Model
+            view.OnLoadPDF += LoadPDF;
             view.OnStartNarration += BeginNarration;
-            view.StopNarrationClicked += (s, e) => EndNarration();
-            view.ExitAppRequested += (s, e) => ExitApp();
+            view.OnStopNarration += EndNarration;
+            view.OnExitApp += ExitApp;
         }
 
         public void LaunchApp()
@@ -116,58 +120,28 @@ namespace PDFNarrator
         ////////////////////////////////////////////////
         public void BeginNarration(object sender, EventArgs e)
         {
-            model.StartAudioSynthesis();
+            if (model.StartAudioSynthesis() == 0)
+                OnAudioInfoStatus?.Invoke(true);
+            else
+                OnAudioInfoStatus?.Invoke(false);
         }
 
-        public void StartAudioSynthesis()
+        public void EndNarration(object sender, EventArgs e)
         {
-            // Método vazio
+            // Stop the audio synthesis
+            model.StopAudioSynthesis();
+            OnStoppedNarration?.Invoke();
         }
 
-        public void SyncAudioData()
-        {
-            // Método vazio
-        }
-
-        public void UpdateAudioData()
-        {
-            // Método vazio
-        }
-
-        public void UpdateAudioStatus()
-        {
-            // Método vazio
-        }
-
-        public void SyncFailed()
-        {
-            // Método vazio
-        }
-
-        public void EndNarration()
-        {
-            // Dispara evento para o Model parar a síntese de áudio
-            StopAudioSynthesisRequested?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void StopAudioSynthesis()
-        {
-            // Método vazio
-        }
-
-        public void AudioStopped()
-        {
-            // Método vazio
-        }
-
-        public void CloseInterface()
-        {
-            // Método vazio
-        }
-
+        ////////////////////////////////////////////////
         public void ExitApp()
         {
-            // Método vazio
+            OnSuccessMessage = null;
+            OnFailedMessage = null;
+            OnAudioInfoStatus = null;
+            OnStoppedNarration = null;
+
+            model.CloseInterface();
         }
 
     }
