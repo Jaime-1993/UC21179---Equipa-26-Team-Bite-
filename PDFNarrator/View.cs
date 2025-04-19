@@ -54,7 +54,7 @@ namespace PDFNarrator
 
         public void ShowSuccessMessage(string extractedText)
         {
-            txtOutput.Text = extractedText;
+            rtbOutput.Text = extractedText;
             MessageBox.Show("PDF loaded successfully!", "Success");
         }
 
@@ -73,14 +73,32 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void PlayAudio()
+        public void PlayAudio(string currentWord)
         {
-            // Método vazio
+            // Anima o botão (muda para verde)
+            btnStartNarration.BackColor = System.Drawing.Color.Green;
+
+            // Destaca a palavra atual no texto
+            if (!string.IsNullOrEmpty(currentWord))
+            {
+                string text = rtbOutput.Text;
+                int startIndex = text.IndexOf(currentWord);
+                if (startIndex >= 0)
+                {
+                    rtbOutput.SelectAll();
+                    rtbOutput.SelectionBackColor = System.Drawing.Color.White;
+                    rtbOutput.Select(startIndex, currentWord.Length);
+                    rtbOutput.SelectionBackColor = System.Drawing.Color.Yellow;
+                }
+            }
         }
 
         public void AudioStopped()
         {
-            // Método vazio
+            // Volta o botão à cor original
+            btnStartNarration.BackColor = System.Drawing.SystemColors.Control;
+            rtbOutput.SelectAll();
+            rtbOutput.SelectionBackColor = System.Drawing.Color.White;
         }
 
         public void ShowConfirmationMessage()
@@ -103,9 +121,9 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void Test_Write_to_TextBox(String data)
+        public void Test_Write_to_TextBox(string data)
         {
-            txtOutput.Text = data;
+            rtbOutput.Text = data;
         }
 
         //private void btn_dummy_Click(object sender, EventArgs e)
@@ -115,7 +133,7 @@ namespace PDFNarrator
 
         private void btn_clear_Click(object sender, EventArgs e)
         {
-            txtOutput.Text = "";
+            rtbOutput.Text = "";
         }
     }
 }
