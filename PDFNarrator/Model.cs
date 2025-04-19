@@ -127,7 +127,7 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void CloseInterface()
+    public class WordEventArgs : EventArgs
         {
             // Método vazio
         }
