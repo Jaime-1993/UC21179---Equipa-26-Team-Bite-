@@ -5,6 +5,8 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PDFNarrator
 {
@@ -13,28 +15,44 @@ namespace PDFNarrator
         private View view;
         private Model model;
 
-        // Evento para notificar o Model de ações como carregar PDF ou iniciar narração
-        public event EventHandler PDFLoadRequested;
-        public event EventHandler AudioSynthesisRequested;
-        public event EventHandler StopAudioSynthesisRequested;
+
+        // Evento para printar informação na View ==> Sucess
+        public event SuccessMsg_Handler OnSuccessMessage;
+        public delegate void SuccessMsg_Handler();
+
+        // Evento para printar informação na View ==> Failed
+        public event FailedMsg_Handler OnFailedMessage;
+        public delegate void FailedMsg_Handler(string text);
+
+        // Atualiza a informação sobre o estado inicial do text audio data
+        public event Action<bool> OnAudioInfoStatus;
+        public event Action OnStoppedNarration;
 
         public Controller()
         {
-            model = new Model(this, null);
+            model = new Model(this, view);
             view = new View(this, model);
-            model.SetView(view);
 
-            // Ligar eventos da View aos métodos do Controller
-            view.LoadPDFClicked += (s, e) => LoadPDF();
-            view.StartNarrationClicked += (s, e) => StartNarration();
-            view.StopNarrationClicked += (s, e) => EndNarration();
-            view.ExitAppRequested += (s, e) => ExitApp();
+            // Updates model on VIEW info
+            model.setView(view);
+            model.setupEvents();
+
+            SetupEvents();
+        }
+
+        public void SetupEvents()
+        {
+            // Ligar eventos do Controller aos métodos do Model
+            view.OnLoadPDF += LoadPDF;
+            view.OnStartNarration += BeginNarration;
+            view.OnStopNarration += EndNarration;
+            view.OnExitApp += ExitApp;
         }
 
         public void LaunchApp()
         {
-            view.DisplayInterface();
-            Application.Run(view);
+            view.CreateInterface();
+            view.AnimateButtons();
         }
 
         public void CreateInterface()
@@ -47,136 +65,83 @@ namespace PDFNarrator
             // Método vazio
         }
 
-        public void LoadPDF()
+        ///////////////////////////////////////////////
+        public void LoadPDF(string path)
         {
-            // Dispara evento para o Model carregar o PDF
-            PDFLoadRequested?.Invoke(this, EventArgs.Empty);
-        }
+            string data;
 
-        public void AskToShowPopUpForPathOfPDF()
-        {
-            // Método vazio
-        }
+            // Check if the path is valid
+            if (string.IsNullOrWhiteSpace(path)) {
+                data = "The path supllied is empty";
+                AskToShowErrorMessageOnFileLoad(data);
+                return;
+            }
 
-        public void LoadPDFFile()
-        {
-            // Método vazio
-        }
+            // Check if the file exist in this path
+            if (!File.Exists(path)) {
+                data = "The path supllied doesn't exist";
+                AskToShowErrorMessageOnFileLoad(data);
+                return;
+            }
 
-        public void PDFLoaded()
-        {
-            // Método vazio
-        }
+            // Send path to Model to load the PDF
+            // Returns Info or Error
+            if (model.LoadPDFFile(path) == 0) {
+                if (model.ExtractText(path) == 0) 
+                    UpdateFileStatus();
+                else
+                {
+                    data = "Error extracting text from PDF file.";
+                    AskToShowErrorMessageOnFileLoad(data);
+                }
 
-        public void ExtractText()
-        {
-            // Método vazio
-        }
+            } else {
+                data = "Error loading PDF file.";
+                AskToShowErrorMessageOnFileLoad(data);
+            }
 
-        public void TextExtracted()
-        {
-            // Método vazio
         }
 
         public void UpdateFileStatus()
         {
-            // Método vazio
+            OnSuccessMessage?.Invoke();
         }
 
-        public void FileLoadFailed()
+        public void AskToShowErrorMessageOnFileLoad(string data)
+        {
+            OnFailedMessage?.Invoke(data);
+        }
+
+        public void SetPDFData()
         {
             // Método vazio
         }
-
-        public void AskToShowErrorMessageOnFileLoad()
+        
+        ////////////////////////////////////////////////
+        public void BeginNarration(object sender, EventArgs e)
         {
-            // Método vazio
+            if (model.StartAudioSynthesis() == 0)
+                OnAudioInfoStatus?.Invoke(true);
+            else
+                OnAudioInfoStatus?.Invoke(false);
         }
 
-        public void BeginNarration()
+        public void EndNarration(object sender, EventArgs e)
         {
-            // Método vazio
+            // Stop the audio synthesis
+            model.StopAudioSynthesis();
+            OnStoppedNarration?.Invoke();
         }
 
-        public void StartNarration()
-        {
-            // Dispara evento para o Model iniciar a síntese de áudio
-            AudioSynthesisRequested?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void StartAudioSynthesis()
-        {
-            // Método vazio
-        }
-
-        public void SyncAudioData()
-        {
-            // Método vazio
-        }
-
-        public void UpdateAudioData()
-        {
-            // Método vazio
-        }
-
-        public void UpdateAudioStatus()
-        {
-            // Método vazio
-        }
-
-        public void SyncFailed()
-        {
-            // Método vazio
-        }
-
-        public void EndNarration()
-        {
-            // Dispara evento para o Model parar a síntese de áudio
-            StopAudioSynthesisRequested?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void StopAudioSynthesis()
-        {
-            // Método vazio
-        }
-
-        public void AudioStopped()
-        {
-            // Método vazio
-        }
-
-        public void CloseInterface()
-        {
-            // Método vazio
-        }
-
+        ////////////////////////////////////////////////
         public void ExitApp()
         {
-            // Método vazio
-        }
+            OnSuccessMessage = null;
+            OnFailedMessage = null;
+            OnAudioInfoStatus = null;
+            OnStoppedNarration = null;
 
-        public void TEST_READPDF()
-        {
-            // Diretório base da aplicação (normalmente bin\Debug ou bin\Release)
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string filename = "Test001.pdf";
-            // Caminho relativo do ficheiro de"Test001.pdf"ntro do projeto
-            //string filePath = Path.Combine(baseDir, "data", filename);
-            
-            
-            // ESTE CAMINHO FUNCIONA MAS TEM QUE ADAPTAR CONSOANTE A VOSSA LOCALIZAÇÃO.
-            string filePath = "C:\\Users\\<username>\\source\\repos\\Jaime-1993\\UC21179---Equipa-26-Team-Bite-\\PDFNarrator\\data\\Test001.pdf";
-            
-            // AINDA NÃO FUNCIONA
-            //string filePath = "\\PDFNarrator\\data\\Test002.pdf";
-            // Open the file
-            //PdfDocument doc = PdfReader.Open(filename, PdfDocumentOpenMode.Import);
-            PdfDocument doc = PdfReader.Open(filePath);
-
-            string name = Path.GetFileNameWithoutExtension(filePath);
-            string data001 = Extractor.PdfToText(filePath);
-
-            view.Test_Write_to_TextBox(data001);
+            model.CloseInterface();
         }
 
     }
