@@ -157,7 +157,7 @@ namespace PDFNarrator
         }
 
         //////////////////////////////////
-        private void Click_StartNarrattion(object sender, EventArgs e)
+        private void Click_StartNarration(object sender, EventArgs e)
         {
             OnStartNarration?.Invoke(this, EventArgs.Empty);
         }

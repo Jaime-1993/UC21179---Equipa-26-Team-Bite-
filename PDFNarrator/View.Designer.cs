@@ -58,7 +58,7 @@
             this.btnStartNarration.TabIndex = 1;
             this.btnStartNarration.Text = "Start Narration";
             this.btnStartNarration.UseVisualStyleBackColor = true;
-            this.btnStartNarration.Click += new System.EventHandler(this.Click_StartNarrattion);
+            this.btnStartNarration.Click += new System.EventHandler(this.Click_StartNarration);
             // 
             // btnStopNarration
             // 
