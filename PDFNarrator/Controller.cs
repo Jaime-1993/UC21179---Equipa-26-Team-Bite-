@@ -86,19 +86,17 @@ namespace PDFNarrator
 
             // Send path to Model to load the PDF
             // Returns Info or Error
-            if (model.LoadPDFFile(path) == 0) {
-                if (model.ExtractText(path) == 0) 
-                    UpdateFileStatus();
-                else
-                {
-                    data = "Error extracting text from PDF file.";
-                    AskToShowErrorMessageOnFileLoad(data);
-                }
-
-            } else {
-                data = "Error loading PDF file.";
-                AskToShowErrorMessageOnFileLoad(data);
+            try
+            {
+                model.LoadPDFFile(path);
+                model.ExtractText(path);
+                UpdateFileStatus();
             }
+            catch (Exception e)
+            {
+                string msg_of_throw = e.Message;
+                AskToShowErrorMessageOnFileLoad(msg_of_throw);
+            };
 
         }
 

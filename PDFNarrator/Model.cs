@@ -4,6 +4,7 @@ using PdfSharpTextExtractor;
 using System;
 using System.Drawing;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PDFNarrator
 {
@@ -47,31 +48,23 @@ namespace PDFNarrator
         }
 
         /////////////////////////////////////////////
-        public int LoadPDFFile(string path)
-        {
-            int result;
-            
+        public void LoadPDFFile(string path)
+        {   
             try {
                 pdfDocument = PdfReader.Open(path); // Usa o campo pdfDocument
-                result = 0;
             } catch (Exception) {
-                result = -1;
+                throw new InvalidOperationException("Error loading PDF file.");
             }
 
-            return result;
         }
 
-        public int ExtractText(string path)
+        public void ExtractText(string path)
         {
             // Returns Text extracted from PDF
-            try
-            {
+            try {
                 str_text_extracted = Extractor.PdfToText(path);
-                return 0;
-            }
-            catch (Exception)
-            {
-                return -1;
+            } catch (Exception) {
+                throw new InvalidOperationException("Error extracting text from PDF file.");
             }
         }
 
