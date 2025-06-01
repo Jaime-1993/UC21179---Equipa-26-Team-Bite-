@@ -6,9 +6,9 @@ using PDFNarrator.Interfaces;
 
 namespace PDFNarrator
 {
-    public partial class View : Form
+    public partial class View : Form, IView
     {
-        private Controller controller;
+        private IController controller;
         private IModel model;
         private SpeechSynthesizer synthesizer;
 
@@ -24,18 +24,15 @@ namespace PDFNarrator
         //===============================
         // Evento para notificar o Controller quando o utilizador clica em "Load PDF"
         public event LoadPDFpath_Handler OnLoadPDF;
-        public delegate void LoadPDFpath_Handler(string path);
 
         // Evento para notificar a MODEL com a informação do PDF
         public event GetPDFdata_Handler OnGetPDFData;
-        public delegate void GetPDFdata_Handler(string data);
 
         // Evento para notificar o Controller quando o utilizador clica em "Start Narration"
         public event EventHandler OnStartNarration;
 
         // Evento para notificar a MODEL com a informação do PDF
         public event SyncAudioData_Handler OnSyncAudioData;
-        public delegate void SyncAudioData_Handler();
 
         // Evento para notificar o Controller quando o utilizador clica em "Stop Narration"
         public event EventHandler OnStopNarration;
@@ -44,7 +41,7 @@ namespace PDFNarrator
         public event Action OnExitApp;
 
         //===============================
-        public View(Controller c, IModel m)
+        public View(IController c, IModel m)
         {
             // Inicializa o Controller e o Model
             controller = c;

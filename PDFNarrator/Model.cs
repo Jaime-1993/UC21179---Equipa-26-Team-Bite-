@@ -10,18 +10,16 @@ namespace PDFNarrator
 {
     public class Model : IModel
     {
-        private Controller controller;
-        private View view;
+        private IController controller;
+        private IView view;
         private PdfDocument pdfDocument;
 
         private string str_text_extracted = "";
 
         // Evento para notificar a VIEW com a informação do PDF
         public event SendPDFdata_Handler OnSendPDFData;
-        public delegate void SendPDFdata_Handler(string data);
 
         public event AudioData_Handler OnAudioData;
-        public delegate void AudioData_Handler(string audio_data);
 
         public event Action OnExitApp;
 
@@ -30,13 +28,13 @@ namespace PDFNarrator
         //public event StatusUpdateHandler AudioSyncedEvent;
         //public event StatusUpdateHandler AudioStoppedEvent;
 
-        public Model(Controller c, View v)
+        public Model(IController c, IView v)
         {
             controller = c;
             view = v;
         }
 
-        public void setView(View v)
+        public void setView(IView v)
         {
             view = v;
         }

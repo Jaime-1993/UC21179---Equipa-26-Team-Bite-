@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace PDFNarrator.Interfaces
 {
+    // Delegates
+    public delegate void SendPDFdata_Handler(string data);
+    public delegate void AudioData_Handler(string audio_data);
     public interface IModel
     {
         // Eventos
-        event Model.SendPDFdata_Handler OnSendPDFData;
-        event Model.AudioData_Handler OnAudioData;
+        event SendPDFdata_Handler OnSendPDFData;
+        event AudioData_Handler OnAudioData;
         event Action OnExitApp;
 
         // Metodos
@@ -21,7 +24,7 @@ namespace PDFNarrator.Interfaces
         void GetPDFData(string data);
         void CloseInterface();
 
-        void setView(View v);
+        void setView(IView v);
         void setupEvents();
     }
 }

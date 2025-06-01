@@ -134,6 +134,8 @@
   <ItemGroup>
     <Compile Include="Controller.cs" />
     <Compile Include="Interfaces\IModel.cs" />
+    <Compile Include="Interfaces\IView.cs" />
+    <Compile Include="Interfaces\IController.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="View.cs">
       <SubType>Form</SubType>

@@ -11,19 +11,17 @@ using PDFNarrator.Interfaces;
 
 namespace PDFNarrator
 {
-    public class Controller
+    public class Controller : IController
     {
-        private View view;
+        private IView view;
         private IModel model;
 
 
         // Evento para printar informação na View ==> Sucess
         public event SuccessMsg_Handler OnSuccessMessage;
-        public delegate void SuccessMsg_Handler();
 
         // Evento para printar informação na View ==> Failed
         public event FailedMsg_Handler OnFailedMessage;
-        public delegate void FailedMsg_Handler(string text);
 
         // Atualiza a informação sobre o estado inicial do text audio data
         public event Action<bool> OnAudioInfoStatus;
@@ -31,13 +29,11 @@ namespace PDFNarrator
 
         public Controller()
         {
-            model = new Model(this, view);
+            model = new Model(this, null);  // Novo construtor com null view
             view = new View(this, model);
-
-            // Updates model on VIEW info
             model.setView(view);
-            model.setupEvents();
 
+            model.setupEvents();
             SetupEvents();
         }
 
