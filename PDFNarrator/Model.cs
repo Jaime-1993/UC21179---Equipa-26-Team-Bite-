@@ -1,4 +1,5 @@
-﻿using PdfSharp.Pdf;
+﻿using PDFNarrator.Interfaces;
+using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using PdfSharpTextExtractor;
 using System;
@@ -7,7 +8,7 @@ using System.IO;
 
 namespace PDFNarrator
 {
-    public class Model
+    public class Model : IModel
     {
         private Controller controller;
         private View view;

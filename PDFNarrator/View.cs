@@ -2,13 +2,14 @@
 using System.IO;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using PDFNarrator.Interfaces;
 
 namespace PDFNarrator
 {
     public partial class View : Form
     {
         private Controller controller;
-        private Model model;
+        private IModel model;
         private SpeechSynthesizer synthesizer;
 
         //===============================
@@ -43,7 +44,7 @@ namespace PDFNarrator
         public event Action OnExitApp;
 
         //===============================
-        public View(Controller c, Model m)
+        public View(Controller c, IModel m)
         {
             // Inicializa o Controller e o Model
             controller = c;

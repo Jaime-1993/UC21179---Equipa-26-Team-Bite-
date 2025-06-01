@@ -7,13 +7,14 @@ using System.IO;
 using System.Xml.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using PDFNarrator.Interfaces;
 
 namespace PDFNarrator
 {
     public class Controller
     {
         private View view;
-        private Model model;
+        private IModel model;
 
 
         // Evento para printar informação na View ==> Sucess
