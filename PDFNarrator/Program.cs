@@ -10,7 +10,7 @@ namespace PDFNarrator
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Controller controller = new Controller();
+            Interfaces.IController controller = new Controller();
             controller.LaunchApp();
         }
     }

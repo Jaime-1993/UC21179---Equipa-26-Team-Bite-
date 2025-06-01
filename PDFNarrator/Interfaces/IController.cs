@@ -22,5 +22,6 @@ namespace PDFNarrator.Interfaces
         void BeginNarration(object sender, EventArgs e);
         void EndNarration(object sender, EventArgs e);
         void ExitApp();
+        void LaunchApp();
     }
 }
