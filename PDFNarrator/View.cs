@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Speech.Synthesis;
+//using System.Speech.Synthesis;
 using System.Windows.Forms;
 
 namespace PDFNarrator
@@ -9,7 +9,8 @@ namespace PDFNarrator
     {
         private Controller controller;
         private Model model;
-        private SpeechSynthesizer synthesizer;
+        //private SpeechSynthesizer synthesizer;
+        private TextToSpeech synthesizer;
 
         //===============================
         //        Init Variables
@@ -50,8 +51,7 @@ namespace PDFNarrator
             model = m;
             
             // Inicializa o SpeechSynthesizer
-            synthesizer = new SpeechSynthesizer();
-            ConfigSynthesizer(synthesizer);
+            synthesizer = new TextToSpeech();
 
             InitializeComponent();
             SetupEvents();
@@ -70,14 +70,6 @@ namespace PDFNarrator
             model.OnExitApp += ExitApp;
 
             FormClosing += (sender, e) => OnExitApp?.Invoke();
-        }
-
-        private void ConfigSynthesizer(SpeechSynthesizer synthesizer)
-        {
-            // Configurações do SpeechSynthesizer
-            synthesizer.Rate = 0; // Velocidade normal
-            synthesizer.Volume = 100; // Volume máximo
-            synthesizer.SelectVoice("Microsoft Zira Desktop"); // Seleciona a voz padrão
         }
 
         public void CreateInterface()
@@ -181,7 +173,7 @@ namespace PDFNarrator
 
         public void PlayAudio(string audio_data)
         {
-            synthesizer.SpeakAsync(audio_data);
+            synthesizer.Play(audio_data);
         }
 
         //////////////////////////////////
@@ -190,7 +182,7 @@ namespace PDFNarrator
             // Change Color on the button "Stop Narration"
             btnStopNarration.ForeColor = System.Drawing.Color.Red;
             // Kills the sound effect
-            synthesizer.SpeakAsyncCancelAll();
+            synthesizer.Stop();
             // Change Color on the button "Start Narration"
             btnStartNarration.ForeColor = System.Drawing.Color.Black;
             // Notifies subscription of "Stop Narration" Event
@@ -211,6 +203,7 @@ namespace PDFNarrator
             OnStartNarration = null;
             OnSyncAudioData = null;
             OnStopNarration = null;
+            synthesizer.Dispose();
 
             // Close the application
             Application.Exit();
