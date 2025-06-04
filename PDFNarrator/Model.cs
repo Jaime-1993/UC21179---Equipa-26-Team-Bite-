@@ -12,9 +12,7 @@ namespace PDFNarrator
     {
         private Controller controller;
         private View view;
-        private PdfDocument pdfDocument;
-
-        private string str_text_extracted = "";
+        public PdfDecoder pdfDecoder;
 
         // Evento para notificar a VIEW com a informação do PDF
         public event SendPDFdata_Handler OnSendPDFData;
@@ -34,6 +32,8 @@ namespace PDFNarrator
         {
             controller = c;
             view = v;
+
+            pdfDecoder = new PdfDecoder();
         }
 
         public void setView(View v)
@@ -51,33 +51,33 @@ namespace PDFNarrator
         public void LoadPDFFile(string path)
         {   
             try {
-                pdfDocument = PdfReader.Open(path); // Usa o campo pdfDocument
-            } catch (Exception) {
-                throw new InvalidOperationException("Error loading PDF file.");
+                pdfDecoder.LoadPDF(path);
+            } catch (InvalidOperationException e) {
+                throw new InvalidOperationException(e.Message);
             }
 
         }
 
-        public void ExtractText(string path)
+        public void ExtractText()
         {
             // Returns Text extracted from PDF
             try {
-                str_text_extracted = Extractor.PdfToText(path);
-            } catch (Exception) {
-                throw new InvalidOperationException("Error extracting text from PDF file.");
+                pdfDecoder.ExtractText();
+            } catch (InvalidOperationException e) {
+                throw new InvalidOperationException(e.Message);
             }
         }
 
         public void GetPDFData(string data)
         {
-            OnSendPDFData?.Invoke(str_text_extracted);
+            OnSendPDFData?.Invoke(pdfDecoder.TextExtracted);
         }
 
         /////////////////////////////////////////////
         public int StartAudioSynthesis()
         {
             // Verifica se o texto extraído está vazio
-            if (str_text_extracted == "") return -1;
+            if (pdfDecoder.TextExtracted == "") return -1;
             
             // Inicia a síntese de áudio com o texto extraído
             view.OnSyncAudioData += AudioDataUpdate;
@@ -87,7 +87,7 @@ namespace PDFNarrator
         public void AudioDataUpdate()
         {
             // Atualização o texto para a reprodução de áudio e notifica a VIEW
-            OnAudioData?.Invoke(str_text_extracted);
+            OnAudioData?.Invoke(pdfDecoder.TextExtracted);
         }
 
         public void UpdateAudioStatus()

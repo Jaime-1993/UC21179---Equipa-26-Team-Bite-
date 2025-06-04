@@ -1,10 +1,5 @@
-﻿using PdfSharp.Pdf.IO;
-using PdfSharp.Pdf;
-using PdfSharpTextExtractor;
-using System;
-using System.Windows.Forms;
+﻿using System;
 using System.IO;
-using System.Xml.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,15 +66,8 @@ namespace PDFNarrator
             string data;
 
             // Check if the path is valid
-            if (string.IsNullOrWhiteSpace(path)) {
-                data = "The path supllied is empty";
-                AskToShowErrorMessageOnFileLoad(data);
-                return;
-            }
-
-            // Check if the file exist in this path
-            if (!File.Exists(path)) {
-                data = "The path supllied doesn't exist";
+            if (!model.pdfDecoder.isPathValid(path)) {
+                data = "The path supllied is invalid";
                 AskToShowErrorMessageOnFileLoad(data);
                 return;
             }
@@ -89,7 +77,7 @@ namespace PDFNarrator
             try
             {
                 model.LoadPDFFile(path);
-                model.ExtractText(path);
+                model.ExtractText();
                 UpdateFileStatus();
             }
             catch (Exception e)
